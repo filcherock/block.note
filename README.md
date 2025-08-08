@@ -1,4 +1,10 @@
 <h1 align="center">block.note</h1>
+<div align="center">
+  
+[![License: GPL](https://img.shields.io/badge/License-GPL-yellow.svg)](#)
+[![Version](https://img.shields.io/badge/version-0.0.1-blue.svg)](#)
+[![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)](#)
+</div>
 <img src="bn1-github.png">
 
 # About the project
