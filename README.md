@@ -10,6 +10,9 @@
 # About the project
 Block.Note is simple CLI text editor written in C++. This program is available for both Linux, Windows and Irion OS.
 
+# Commands for the editor
+- :q - exit editor
+
 # Download and Launch
 ``` bash
 # Clone the repository
