@@ -24,4 +24,4 @@ sh build.sh
 ```
 
 # License
-Block.Note is distributed under the [GNU GPL license](https://github.com/filcherock/block.note/blob/main/LICENSE).
+Block.Note is distributed under the [GNU General Public License](https://github.com/filcherock/block.note/blob/main/LICENSE).
