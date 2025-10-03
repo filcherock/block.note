@@ -2,7 +2,7 @@
 <div align="center">
   
 [![License: GPL](https://img.shields.io/badge/License-GPL-yellow.svg)](#)
-[![Version](https://img.shields.io/badge/version-0.0.1-blue.svg)](#)
+[![Version](https://img.shields.io/badge/version-0.1.0-blue.svg)](#)
 [![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)](#)
 </div>
 <img src="docs/readme-image/bn1-github.png">
