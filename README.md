@@ -5,13 +5,14 @@
 [![Version](https://img.shields.io/badge/version-0.0.1-blue.svg)](#)
 [![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)](#)
 </div>
-<img src="bn1-github.png">
+<img src="docs/readme-image/bn1-github.png">
 
 # About the project
 Block.Note is simple CLI text editor written in C++. This program is available for both Linux, Windows and Irion OS.
 
 # Commands for the editor
 - :q - exit editor
+- :wq - save file and exit editor
 
 # Download and Launch
 ``` bash
