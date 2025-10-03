@@ -1,3 +1,21 @@
+/*
+ /$$$$$$$  /$$        /$$$$$$   /$$$$$$  /$$   /$$     /$$   /$$  /$$$$$$  /$$$$$$$$ /$$$$$$$$
+| $$__  $$| $$       /$$__  $$ /$$__  $$| $$  /$$/    | $$$ | $$ /$$__  $$|__  $$__/| $$_____/
+| $$  \ $$| $$      | $$  \ $$| $$  \__/| $$ /$$/     | $$$$| $$| $$  \ $$   | $$   | $$      
+| $$$$$$$ | $$      | $$  | $$| $$      | $$$$$/      | $$ $$ $$| $$  | $$   | $$   | $$$$$   
+| $$__  $$| $$      | $$  | $$| $$      | $$  $$      | $$  $$$$| $$  | $$   | $$   | $$__/   
+| $$  \ $$| $$      | $$  | $$| $$    $$| $$\  $$     | $$\  $$$| $$  | $$   | $$   | $$      
+| $$$$$$$/| $$$$$$$$|  $$$$$$/|  $$$$$$/| $$ \  $$ /$$| $$ \  $$|  $$$$$$/   | $$   | $$$$$$$$
+|_______/ |________/ \______/  \______/ |__/  \__/|__/|__/  \__/ \______/    |__/   |________/
+==============================================================================================
+==============================================================================================
+Block.Note Text Editor v0.1.0 by filcher
+Author: filcher (https://github.com/filcherock)
+Official repos: https://github.com/filcherock/block.note
+License: GNU General Public License v3.0 (https://github.com/filcherock/block.note/blob/main/LICENSE)
+Version: 0.1.0
+*/
+
 // Include library
 #include <iostream>
 #include <string>
@@ -6,6 +24,9 @@
 #include <sstream>
 #include <cstdlib>
 #include <ncurses.h>
+
+// Include header files
+#include <../lib/json.hpp>  // For working with JSON
 
 // Create constant
 const std::string FULL_NAME = "Block.Note Text Editor";
@@ -22,6 +43,7 @@ vector<string> lines;
 // Create cursor position
 int cursorX = 0; 
 int cursorY = 0;
+int offsetY = 0;
 
 // Split text function
 vector<string> split(const string& s, char delimiter) {
@@ -37,22 +59,38 @@ vector<string> split(const string& s, char delimiter) {
 
 // Editor display
 void display() {
-    clear(); 
+    clear();
     printw("%s v%s\n", FULL_NAME.c_str(), VERSION.c_str());
     printw("Editing: %s.%s\n\n", fileNameInput.c_str(), fileTypeInput.c_str());
-
-    for (size_t i = 0; i < lines.size(); ++i) {
-        printw("%s\n", lines[i].c_str());
+    int maxY, maxX;
+    getmaxyx(stdscr, maxY, maxX);
+    int screenLines = maxY - 3;
+    if (offsetY > (int)lines.size() - screenLines) {
+        offsetY = std::max(0, (int)lines.size() - screenLines);
     }
-
-    if(cursorY >= (int)lines.size()) cursorY = (int)lines.size() - 1;
-    if(cursorY < 0) cursorY = 0;
-
-    if(cursorX > (int)lines[cursorY].size()) cursorX = (int)lines[cursorY].size();
-    if(cursorX < 0) cursorX = 0;
-
-    move(cursorY + 3, cursorX);
+    for (int i = 0; i < screenLines; ++i) {
+        int lineIdx = offsetY + i;
+        if (lineIdx >= (int)lines.size()) break;
+        printw("%s\n", lines[lineIdx].c_str());
+    }
+    int cursorScreenY = cursorY - offsetY + 3; 
+    if (cursorScreenY < 3) cursorScreenY = 3;
+    if (cursorScreenY >= maxY) cursorScreenY = maxY -1;
+    if (cursorX > (int)lines[cursorY].size()) cursorX = (int)lines[cursorY].size();
+    if (cursorX < 0) cursorX = 0;
+    move(cursorScreenY, cursorX);
     refresh();
+}
+
+// Update offset
+void updateOffset(int maxY) {
+    int screenLines = maxY - 3;
+    if (cursorY < offsetY) {
+        offsetY = cursorY;
+    }
+    else if (cursorY >= offsetY + screenLines) {
+        offsetY = cursorY - screenLines + 1;
+    }
 }
 
 // Save file
@@ -70,6 +108,10 @@ void saveToFile() {
 // Editor control
 void editor() {
     while (true) {
+        int maxY, maxX;
+        getmaxyx(stdscr, maxY, maxX);
+        updateOffset(maxY);
+
         display();
         int ch = getch();
 
@@ -130,6 +172,8 @@ void editor() {
             } else if (string(command) == "wq") {
                 saveToFile();
                 break;
+            } else if (string(command) == "w") {
+                saveToFile();
             } else {
                 printw("Unknown command!\n");
                 getch();
@@ -189,7 +233,6 @@ int main(int argc, char* argv[]) {
         cin >> fileNameInput;
         cout << "Please, enter file type (txt, bnt, doc ...): ";
         cin >> fileTypeInput;
-
         initscr();
         cbreak();
         noecho();
