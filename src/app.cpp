@@ -25,9 +25,6 @@ Version: 0.1.0
 #include <cstdlib>
 #include <ncurses.h>
 
-// Include header files
-#include <../lib/json.hpp>  // For working with JSON
-
 // Create constant
 const std::string FULL_NAME = "Block.Note Text Editor";
 const std::string VERSION = "0.1.0";
@@ -60,24 +57,36 @@ vector<string> split(const string& s, char delimiter) {
 // Editor display
 void display() {
     clear();
-    printw("%s v%s\n", FULL_NAME.c_str(), VERSION.c_str());
-    printw("Editing: %s.%s\n\n", fileNameInput.c_str(), fileTypeInput.c_str());
+    start_color();
+    init_pair(1, COLOR_BLACK, COLOR_WHITE);
+    attron(COLOR_PAIR(1));
     int maxY, maxX;
     getmaxyx(stdscr, maxY, maxX);
-    int screenLines = maxY - 3;
+    std::string header = FULL_NAME + " v" + VERSION;
+    std::string editing = "Editing: " + fileNameInput + "." + fileTypeInput;
+
+    printw("%-*s", maxX - editing.length() - 1, header.c_str());
+    printw("%s\n", editing.c_str());
+
+    attroff(COLOR_PAIR(1));
+
+    int screenLines = maxY - 2;
     if (offsetY > (int)lines.size() - screenLines) {
         offsetY = std::max(0, (int)lines.size() - screenLines);
     }
+
     for (int i = 0; i < screenLines; ++i) {
         int lineIdx = offsetY + i;
         if (lineIdx >= (int)lines.size()) break;
         printw("%s\n", lines[lineIdx].c_str());
     }
-    int cursorScreenY = cursorY - offsetY + 3; 
-    if (cursorScreenY < 3) cursorScreenY = 3;
-    if (cursorScreenY >= maxY) cursorScreenY = maxY -1;
+
+    int cursorScreenY = cursorY - offsetY + 1; 
+    if (cursorScreenY < 1) cursorScreenY = 1;
+    if (cursorScreenY >= maxY) cursorScreenY = maxY - 1;
     if (cursorX > (int)lines[cursorY].size()) cursorX = (int)lines[cursorY].size();
     if (cursorX < 0) cursorX = 0;
+
     move(cursorScreenY, cursorX);
     refresh();
 }
@@ -212,6 +221,7 @@ void openFile(string fileName, string fileType) {
 
 // Great function
 int great() {
+    system("clear");
     cout << "\t\t Block.Note Text Editor" << endl;
     cout << "\tSmall CLI text editor written in C++" << endl;
     cout << "\tfor quit, please enter ':q'. Good Luck <3" << endl;
@@ -254,7 +264,7 @@ int main(int argc, char* argv[]) {
 
     } else {
         endwin();
-        cout << "Usage: " << argv[0] << " <file> or " << argv[0] << " update\n";
+        cout << "Usage: " << argv[0] << " <file>" << endl;
         return 1;
     }
 
